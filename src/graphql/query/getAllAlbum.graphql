@@ -1,0 +1,7 @@
+query GetAllAlbums {
+  allAlbums {
+    name
+    createdAt
+  }
+}
+
