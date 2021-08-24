@@ -1,0 +1,12 @@
+mutation CreateAlbum($name : String!){
+  createAlbum(name:$name){
+    album {
+      id
+      name
+      createdAt
+      owner {
+        username
+      }
+    }
+  }
+}

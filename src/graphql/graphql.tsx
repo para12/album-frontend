@@ -78,6 +78,11 @@ export type ArchiveAccount = {
   errors?: Maybe<Scalars['ExpectedErrorType']>;
 };
 
+export type CreateAlbum = {
+  __typename?: 'CreateAlbum';
+  album?: Maybe<AlbumType>;
+};
+
 
 /**
  * Delete account permanently or make `user.is_active=False`.
@@ -97,6 +102,7 @@ export type DeleteAccount = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createAlbum?: Maybe<CreateAlbum>;
   /**
    * Register user with fields defined in the settings.
    *
@@ -235,6 +241,11 @@ export type Mutation = {
   refreshToken?: Maybe<RefreshToken>;
   /** Same as `grapgql_jwt` implementation, with standard output. */
   revokeToken?: Maybe<RevokeToken>;
+};
+
+
+export type MutationCreateAlbumArgs = {
+  name?: Maybe<Scalars['String']>;
 };
 
 
@@ -389,10 +400,10 @@ export type PasswordReset = {
 
 export type Query = {
   __typename?: 'Query';
+  allAlbums?: Maybe<Array<Maybe<AlbumType>>>;
   userByName?: Maybe<UserType>;
   me?: Maybe<UserType>;
   allUsers?: Maybe<Array<Maybe<UserType>>>;
-  allAlbums?: Maybe<Array<Maybe<AlbumType>>>;
 };
 
 
@@ -596,6 +607,13 @@ export type VerifyToken = {
   errors?: Maybe<Scalars['ExpectedErrorType']>;
 };
 
+export type CreateAlbumMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type CreateAlbumMutation = { __typename?: 'Mutation', createAlbum?: Maybe<{ __typename?: 'CreateAlbum', album?: Maybe<{ __typename?: 'AlbumType', id: any, name: string, createdAt: any, owner: { __typename?: 'UserType', username: string } }> }> };
+
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
@@ -632,6 +650,46 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 export type MeQuery = { __typename?: 'Query', me?: Maybe<{ __typename?: 'UserType', username: string, lastLogin?: Maybe<any>, email: string }> };
 
 
+export const CreateAlbumDocument = gql`
+    mutation CreateAlbum($name: String!) {
+  createAlbum(name: $name) {
+    album {
+      id
+      name
+      createdAt
+      owner {
+        username
+      }
+    }
+  }
+}
+    `;
+export type CreateAlbumMutationFn = Apollo.MutationFunction<CreateAlbumMutation, CreateAlbumMutationVariables>;
+
+/**
+ * __useCreateAlbumMutation__
+ *
+ * To run a mutation, you first call `useCreateAlbumMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateAlbumMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createAlbumMutation, { data, loading, error }] = useCreateAlbumMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateAlbumMutation(baseOptions?: Apollo.MutationHookOptions<CreateAlbumMutation, CreateAlbumMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateAlbumMutation, CreateAlbumMutationVariables>(CreateAlbumDocument, options);
+      }
+export type CreateAlbumMutationHookResult = ReturnType<typeof useCreateAlbumMutation>;
+export type CreateAlbumMutationResult = Apollo.MutationResult<CreateAlbumMutation>;
+export type CreateAlbumMutationOptions = Apollo.BaseMutationOptions<CreateAlbumMutation, CreateAlbumMutationVariables>;
 export const LoginDocument = gql`
     mutation login($username: String!, $password: String!) {
   tokenAuth(username: $username, password: $password) {

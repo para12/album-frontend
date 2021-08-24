@@ -2,9 +2,13 @@ import { createContext, useState, ReactNode, useEffect } from "react";
 import { useMeQuery } from "./graphql/graphql";
 
 type ContextProp = {
-  state: { isLoggedIn: string | undefined };
+  state: { isLoggedIn: string | undefined | null | boolean };
   actions: {
-    setIsLoggedIn: React.Dispatch<React.SetStateAction<string | undefined>> | undefined;
+    setIsLoggedIn:
+      | React.Dispatch<
+          React.SetStateAction<string | undefined | null | boolean>
+        >
+      | undefined;
   };
 };
 
@@ -13,8 +17,8 @@ type ProviderProp = {
 };
 
 export const Context = createContext<ContextProp>({
-    state: { isLoggedIn : undefined}, 
-    actions: {setIsLoggedIn : undefined}
+  state: { isLoggedIn: undefined },
+  actions: { setIsLoggedIn: undefined },
 });
 
 export const ContextProvider = ({ children }: ProviderProp) => {
@@ -22,7 +26,9 @@ export const ContextProvider = ({ children }: ProviderProp) => {
   if (error) {
     console.log(error);
   }
-  const [isLoggedIn, setIsLoggedIn] = useState<string | undefined>("");
+  const [isLoggedIn, setIsLoggedIn] = useState<
+    string | undefined | null | boolean
+  >();
 
   const value = {
     state: {
@@ -35,7 +41,7 @@ export const ContextProvider = ({ children }: ProviderProp) => {
 
   useEffect(() => {
     if (!loading && data) {
-      setIsLoggedIn(data.me?.username)
+      setIsLoggedIn(data.me ? data.me.username : false);
     }
   }, [data, loading]);
 

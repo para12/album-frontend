@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useGetAllAlbumsQuery } from "../graphql/graphql";
 import { MainContainer } from "../assets/styles/wrappers";
 import { Context } from "../Context";
@@ -47,12 +47,15 @@ const AlbumWrapper = styled.div`
   border: grey 1px dashed;
 `;
 
+type activationParamType = {
+    username: string;
+  };
 
-
-const Main = () => {
+const Album = () => {
   const { data, loading } = useGetAllAlbumsQuery();
   const [albumList, setAlbumList] = useState<Array<AlbumType | null>>();
   const history = useHistory();
+  const { username } = useParams<activationParamType>();
 
   const {
     state: { isLoggedIn },
@@ -68,14 +71,14 @@ const Main = () => {
     <>
       {albumList && (
         <MainContainer>
-          {isLoggedIn && <MainHeader onClick={() => history.push('./createAlbum')} >Create Album + </MainHeader>}
+          {isLoggedIn && <MainHeader onClick={() => history.push('./addPhoto')} >Add Photo + </MainHeader>}
 
           <MainBody>
             <AlbumListWrapper>
               {albumList.map((album) => {
                 return (
                   <AlbumWrapper key={album?.name}>
-                    <Link to={{ pathname: `/album/:${isLoggedIn}`}}> <h2>{album!.name}</h2> </Link>
+                    <h2>{album!.name} {username}</h2>
                   </AlbumWrapper>
                 );
               })}
@@ -87,4 +90,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default Album;
