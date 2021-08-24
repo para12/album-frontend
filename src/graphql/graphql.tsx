@@ -357,19 +357,6 @@ export type ObtainJsonWebToken = {
   refreshToken?: Maybe<Scalars['String']>;
 };
 
-/** The Relay compliant `PageInfo` type, containing data necessary to paginate this connection. */
-export type PageInfo = {
-  __typename?: 'PageInfo';
-  /** When paginating forwards, are there more items? */
-  hasNextPage: Scalars['Boolean'];
-  /** When paginating backwards, are there more items? */
-  hasPreviousPage: Scalars['Boolean'];
-  /** When paginating backwards, the cursor to continue. */
-  startCursor?: Maybe<Scalars['String']>;
-  /** When paginating forwards, the cursor to continue. */
-  endCursor?: Maybe<Scalars['String']>;
-};
-
 /**
  * Change account password when user knows the old password.
  *
@@ -402,33 +389,15 @@ export type PasswordReset = {
 
 export type Query = {
   __typename?: 'Query';
-  me?: Maybe<UserNode>;
-  user?: Maybe<UserNode>;
-  users?: Maybe<UserNodeConnection>;
+  userByName?: Maybe<UserType>;
+  me?: Maybe<UserType>;
   allUsers?: Maybe<Array<Maybe<UserType>>>;
   allAlbums?: Maybe<Array<Maybe<AlbumType>>>;
 };
 
 
-export type QueryUserArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type QueryUsersArgs = {
-  offset?: Maybe<Scalars['Int']>;
-  before?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  email?: Maybe<Scalars['String']>;
+export type QueryUserByNameArgs = {
   username?: Maybe<Scalars['String']>;
-  username_Icontains?: Maybe<Scalars['String']>;
-  username_Istartswith?: Maybe<Scalars['String']>;
-  isActive?: Maybe<Scalars['Boolean']>;
-  status_Archived?: Maybe<Scalars['Boolean']>;
-  status_Verified?: Maybe<Scalars['Boolean']>;
-  status_SecondaryEmail?: Maybe<Scalars['String']>;
 };
 
 /** Same as `grapgql_jwt` implementation, with standard output. */
@@ -566,23 +535,6 @@ export type UserNode = Node & {
   secondaryEmail?: Maybe<Scalars['String']>;
 };
 
-export type UserNodeConnection = {
-  __typename?: 'UserNodeConnection';
-  /** Pagination data for this connection. */
-  pageInfo: PageInfo;
-  /** Contains the nodes in this connection. */
-  edges: Array<Maybe<UserNodeEdge>>;
-};
-
-/** A Relay edge containing a `UserNode` and its cursor. */
-export type UserNodeEdge = {
-  __typename?: 'UserNodeEdge';
-  /** The item at the end of the edge */
-  node?: Maybe<UserNode>;
-  /** A cursor for use in pagination */
-  cursor: Scalars['String'];
-};
-
 export type UserType = {
   __typename?: 'UserType';
   id: Scalars['ID'];
@@ -644,12 +596,30 @@ export type VerifyToken = {
   errors?: Maybe<Scalars['ExpectedErrorType']>;
 };
 
-export type RefreshTokenMutationVariables = Exact<{
-  refreshToken: Scalars['String'];
+export type LoginMutationVariables = Exact<{
+  username: Scalars['String'];
+  password: Scalars['String'];
 }>;
 
 
-export type RefreshTokenMutation = { __typename?: 'Mutation', refreshToken?: Maybe<{ __typename?: 'RefreshToken', token?: Maybe<string>, success?: Maybe<boolean>, errors?: Maybe<any>, payload?: Maybe<any>, refreshToken?: Maybe<string> }> };
+export type LoginMutation = { __typename?: 'Mutation', tokenAuth?: Maybe<{ __typename?: 'ObtainJSONWebToken', success?: Maybe<boolean>, errors?: Maybe<any>, token?: Maybe<string>, refreshToken?: Maybe<string> }> };
+
+export type RegisterMutationVariables = Exact<{
+  username: Scalars['String'];
+  email: Scalars['String'];
+  password1: Scalars['String'];
+  password2: Scalars['String'];
+}>;
+
+
+export type RegisterMutation = { __typename?: 'Mutation', register?: Maybe<{ __typename?: 'Register', success?: Maybe<boolean>, errors?: Maybe<any> }> };
+
+export type VerifyAccountMutationVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+
+export type VerifyAccountMutation = { __typename?: 'Mutation', verifyAccount?: Maybe<{ __typename?: 'VerifyAccount', success?: Maybe<boolean>, errors?: Maybe<any> }> };
 
 export type GetAllAlbumsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -659,46 +629,122 @@ export type GetAllAlbumsQuery = { __typename?: 'Query', allAlbums?: Maybe<Array<
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: Maybe<{ __typename?: 'UserNode', username: string, lastLogin?: Maybe<any>, email: string, pk?: Maybe<number> }> };
+export type MeQuery = { __typename?: 'Query', me?: Maybe<{ __typename?: 'UserType', username: string, lastLogin?: Maybe<any>, email: string }> };
 
 
-export const RefreshTokenDocument = gql`
-    mutation RefreshToken($refreshToken: String!) {
-  refreshToken(refreshToken: $refreshToken) {
-    token
+export const LoginDocument = gql`
+    mutation login($username: String!, $password: String!) {
+  tokenAuth(username: $username, password: $password) {
     success
     errors
-    payload
+    token
     refreshToken
   }
 }
     `;
-export type RefreshTokenMutationFn = Apollo.MutationFunction<RefreshTokenMutation, RefreshTokenMutationVariables>;
+export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
- * __useRefreshTokenMutation__
+ * __useLoginMutation__
  *
- * To run a mutation, you first call `useRefreshTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRefreshTokenMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [refreshTokenMutation, { data, loading, error }] = useRefreshTokenMutation({
+ * const [loginMutation, { data, loading, error }] = useLoginMutation({
  *   variables: {
- *      refreshToken: // value for 'refreshToken'
+ *      username: // value for 'username'
+ *      password: // value for 'password'
  *   },
  * });
  */
-export function useRefreshTokenMutation(baseOptions?: Apollo.MutationHookOptions<RefreshTokenMutation, RefreshTokenMutationVariables>) {
+export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RefreshTokenMutation, RefreshTokenMutationVariables>(RefreshTokenDocument, options);
+        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options);
       }
-export type RefreshTokenMutationHookResult = ReturnType<typeof useRefreshTokenMutation>;
-export type RefreshTokenMutationResult = Apollo.MutationResult<RefreshTokenMutation>;
-export type RefreshTokenMutationOptions = Apollo.BaseMutationOptions<RefreshTokenMutation, RefreshTokenMutationVariables>;
+export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
+export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
+export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const RegisterDocument = gql`
+    mutation Register($username: String!, $email: String!, $password1: String!, $password2: String!) {
+  register(
+    username: $username
+    email: $email
+    password1: $password1
+    password2: $password2
+  ) {
+    success
+    errors
+  }
+}
+    `;
+export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
+
+/**
+ * __useRegisterMutation__
+ *
+ * To run a mutation, you first call `useRegisterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerMutation, { data, loading, error }] = useRegisterMutation({
+ *   variables: {
+ *      username: // value for 'username'
+ *      email: // value for 'email'
+ *      password1: // value for 'password1'
+ *      password2: // value for 'password2'
+ *   },
+ * });
+ */
+export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<RegisterMutation, RegisterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, options);
+      }
+export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
+export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
+export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const VerifyAccountDocument = gql`
+    mutation VerifyAccount($token: String!) {
+  verifyAccount(token: $token) {
+    success
+    errors
+  }
+}
+    `;
+export type VerifyAccountMutationFn = Apollo.MutationFunction<VerifyAccountMutation, VerifyAccountMutationVariables>;
+
+/**
+ * __useVerifyAccountMutation__
+ *
+ * To run a mutation, you first call `useVerifyAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyAccountMutation, { data, loading, error }] = useVerifyAccountMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useVerifyAccountMutation(baseOptions?: Apollo.MutationHookOptions<VerifyAccountMutation, VerifyAccountMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VerifyAccountMutation, VerifyAccountMutationVariables>(VerifyAccountDocument, options);
+      }
+export type VerifyAccountMutationHookResult = ReturnType<typeof useVerifyAccountMutation>;
+export type VerifyAccountMutationResult = Apollo.MutationResult<VerifyAccountMutation>;
+export type VerifyAccountMutationOptions = Apollo.BaseMutationOptions<VerifyAccountMutation, VerifyAccountMutationVariables>;
 export const GetAllAlbumsDocument = gql`
     query GetAllAlbums {
   allAlbums {
@@ -740,7 +786,6 @@ export const MeDocument = gql`
     username
     lastLogin
     email
-    pk
   }
 }
     `;

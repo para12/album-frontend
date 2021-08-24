@@ -1,23 +1,14 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { useGetAllAlbumsQuery, useMeQuery } from "../graphql/graphql";
-
+import { useGetAllAlbumsQuery } from "../graphql/graphql";
+import { MainContainer } from "../assets/styles/wrappers";
+import { Context } from "../Context"
 
 interface AlbumType {
-  name : string;
-  createdAt : string;
+  name: string;
+  createdAt: string;
 }
-const MainContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: scroll;
-  position: fixed;
-  left: 0;
-  top: 0;
-`;
 
 const MainHeader = styled.div`
   width: 100%;
@@ -34,13 +25,24 @@ const MainBody = styled.div`
   justify-content: center;
 `;
 
-const RoomListWrapper = styled.div`
-  width: 100%;
+const AlbumListWrapper = styled.div`
+  min-width: 900px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   margin: 30px auto;
+`;
+
+const AlbumWrapper = styled.div`
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+  border: grey 1px dashed;
 `;
 
 const LineStyle = styled.div`
@@ -53,6 +55,18 @@ const LineStyle = styled.div`
 
 const OneColumn = styled.div`
   width: 200px;
+`;
+
+const Menu = styled.div`
+  top: 0;
+  right: 0;
+  position: fixed;
+  width: 200px;
+  height: 50px;
+  padding: 5px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const CreateButton = styled.div``;
@@ -79,31 +93,40 @@ const Line = ({ contents }: { contents: { type: string; data: string[] } }) => {
 const Main = () => {
   const { data, loading } = useGetAllAlbumsQuery();
   // const { data: meData, loading: meLoading } = useMeQuery();
-  const [roomList, setRoomList] = useState<Array<AlbumType | null>>();
+  const [albumList, setAlbumList] = useState<Array<AlbumType | null>>();
   // const [me, setMe] = useState<any>();
+  const [searchText, setSearchText] = useState("hyunwoo");
+
+  const {state : { isLoggedIn }} = useContext(Context);
 
   useEffect(() => {
     if (data) {
-      setRoomList(data!.allAlbums!);
+      setAlbumList(data!.allAlbums!);
       // console.log(meData.me!.username);
     }
   }, [data, loading]);
 
   return (
     <>
-      {roomList && (
+      <Menu>
+        <Link to={{ pathname: "/login" }}>login</Link>
+      </Menu>
+      { isLoggedIn && <div>{isLoggedIn}</div> }
+      {albumList && (
         <MainContainer>
           <MainHeader>
             <h1>Album</h1>
           </MainHeader>
           <MainBody>
-            <RoomListWrapper>
-              {roomList.map((room) => {
+            <AlbumListWrapper>
+              {albumList.map((album) => {
                 return (
-                  <div>{room!.name}</div>
+                  <AlbumWrapper key={album?.name}>
+                    <h2>{album!.name}</h2>
+                  </AlbumWrapper>
                 );
               })}
-            </RoomListWrapper>
+            </AlbumListWrapper>
             {/* {me && (
               <CreateButton>
                 <Link to="/CreateRoom">

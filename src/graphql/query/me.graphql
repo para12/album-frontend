@@ -3,6 +3,5 @@ query Me {
     username
     lastLogin
     email
-    pk
   }
 }

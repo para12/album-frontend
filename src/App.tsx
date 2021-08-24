@@ -1,38 +1,38 @@
-import { ApolloClient, ApolloLink, ApolloProvider, createHttpLink, fromPromise, InMemoryCache } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloLink,
+  ApolloProvider,
+  createHttpLink,
+  InMemoryCache,
+} from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { useState } from "react";
-import styled from "styled-components";
-import Router from './Router';
-import Cookies from 'js-cookie';
-
-const FullContainer = styled.div`
-  display : flex;
-  justify-content : center;
-  align-items : center;
-  width : 80% auto;
-`;
+import Router from "./Router";
+import Cookies from "js-cookie";
+import { FullContainer } from "./assets/styles/wrappers";
+import { ContextProvider} from "./Context";
 
 const App = () => {
-  const [token, setToken] = useState(Cookies.get('token'))
-  const refreshToken = Cookies.get('refreshToken')
+  const [token, setToken] = useState(Cookies.get("token"));
+  const refreshToken = Cookies.get("refreshToken");
   const authLink = setContext((_, { headers }) => {
     return {
       headers: {
         ...headers,
         authorization: `JWT ${token}`,
-        "x-requested-with" : refreshToken
+        "x-requested-with": refreshToken,
       },
     };
   });
 
   const httpLink = createHttpLink({
     uri: "http://localhost:8000/app/graphql",
-    credentials : 'include'
+    credentials: "include",
   });
 
   const addDateLink = new ApolloLink((operation, forward) => {
-    return forward(operation).map(response => {
-      setToken(Cookies.get('token')!)
+    return forward(operation).map((response) => {
+      setToken(Cookies.get("token")!);
       return response;
     });
   });
@@ -42,12 +42,13 @@ const App = () => {
     cache: new InMemoryCache(),
   });
 
-  
   return (
     <ApolloProvider client={client}>
-      <FullContainer>
-        <Router />
-      </FullContainer>
+      <ContextProvider>
+        <FullContainer>
+          <Router />
+        </FullContainer>
+      </ContextProvider>
     </ApolloProvider>
   );
 };
