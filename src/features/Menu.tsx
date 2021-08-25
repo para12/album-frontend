@@ -18,20 +18,20 @@ const Menu = styled.div`
 
 const MenuLayout = ({ children }: { children: ReactNode }) => {
   const {
-    state: { isLoggedIn },
-    actions: { setIsLoggedIn },
+    state: { loginUser },
+    actions: { setLoginUser },
   } = useContext(Context);
   const history = useHistory();
 
   return (
     <>
       <Menu>
-        {isLoggedIn && (
+        {loginUser && (
           <div
             onClick={() => {
               Cookies.set("token", "");
               Cookies.set("refreshToken", "");
-              setIsLoggedIn!(undefined);
+              setLoginUser!(undefined);
               history.push("/");
               window.location.reload();
             }}
@@ -39,7 +39,7 @@ const MenuLayout = ({ children }: { children: ReactNode }) => {
             logout
           </div>
         )}
-        {isLoggedIn === false && <Link to={{ pathname: "/login" }}>login</Link>}
+        {loginUser === false && <Link to={{ pathname: "/login" }}>login</Link>}
       </Menu>
       {children}
     </>

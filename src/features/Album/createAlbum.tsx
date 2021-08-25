@@ -1,28 +1,28 @@
 import { useContext, useEffect, useState } from "react";
-import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import {
   useCreateAlbumMutation,
-  GetAllAlbumsDocument,
-} from "../graphql/graphql";
-import { Context } from "../Context";
+  GetUserAlbumsDocument,
+} from "../../graphql/graphql";
+import { Context } from "../../Context";
 
 const CreateAlbum = () => {
   const [name, setName] = useState<string>("");
   const [createAlbum] = useCreateAlbumMutation();
   const history = useHistory();
   const {
-    state: { isLoggedIn },
+    state: { loginUser },
   } = useContext(Context);
-
+  
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!loginUser) {
+      alert('login needded');
       history.push("./");
     }
   });
   return (
     <>
-      {isLoggedIn && (
+      {loginUser && (
         <>
           <p>name</p>
           <input onChange={(e) => setName(e.target.value)} value={name} />
@@ -30,7 +30,7 @@ const CreateAlbum = () => {
             onClick={async () => {
               await createAlbum({
                 variables: { name },
-                refetchQueries: [{ query: GetAllAlbumsDocument }],
+                refetchQueries: [{ query: GetUserAlbumsDocument, variables : { username : loginUser} }],
               });
               history.push("/");
             }}
@@ -39,7 +39,7 @@ const CreateAlbum = () => {
           </button>
         </>
       )}
-      {!isLoggedIn && (
+      {!loginUser && (
         <>
           <p>back to main..</p>
         </>

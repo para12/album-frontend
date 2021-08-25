@@ -1,8 +1,8 @@
 import { useContext, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { useLoginMutation } from "../graphql/graphql";
+import { useLoginMutation } from "../../graphql/graphql";
 import Cookies from "js-cookie";
-import { Context } from "../Context";
+import { Context } from "../../Context";
 
 const Login = () => {
   const [verifyAccount, { data, loading, error }] = useLoginMutation();
@@ -11,17 +11,23 @@ const Login = () => {
   let loginError = "";
   const history = useHistory();
   const {
-    actions: { setIsLoggedIn },
+    actions: { setLoginUser },
   } = useContext(Context);
-
 
   if (!loading && !error) {
     if (data?.tokenAuth?.success) {
-      Cookies.set("token", data.tokenAuth.token as string);
-      Cookies.set("refreshToken", data.tokenAuth.refreshToken as string);
-      setIsLoggedIn!(username);
-      history.push("./");
-      window.location.reload();
+        // console.log(data.tokenAuth!.token)
+        Cookies.set("token", data.tokenAuth!.token as string);
+        while (!Cookies.get("token")){
+          Cookies.set("token", data.tokenAuth!.token as string);
+        } 
+        Cookies.set("refreshToken", data.tokenAuth!.refreshToken as string);
+        while (!Cookies.get("refreshToken")){
+          Cookies.set("refreshToken", data.tokenAuth!.refreshToken as string);
+        }
+        setLoginUser!(username);
+        history.push(`/`);
+        window.location.reload();
     }
     if (!data?.tokenAuth?.success) {
       loginError = data?.tokenAuth?.errors.nonFieldErrors[0].message;

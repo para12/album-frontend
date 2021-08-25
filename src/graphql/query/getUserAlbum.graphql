@@ -1,0 +1,11 @@
+query GetUserAlbums($username : String!) {
+  userAlbums(username : $username) {
+    id
+    name
+    createdAt
+    owner {
+      username
+    }
+  }
+}
+

@@ -1,0 +1,12 @@
+mutation ModifyAlbum($id : String!, $name : String!){
+  modifyAlbum(id:$id, name:$name){
+    album {
+      id
+      name
+      createdAt
+      owner {
+        username
+      }
+    }
+  }
+}

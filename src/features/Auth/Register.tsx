@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useRegisterMutation } from "../graphql/graphql";
+import { useRegisterMutation } from "../../graphql/graphql";
 
 const Register = () => {
   const [register, { data, loading, error }] = useRegisterMutation();

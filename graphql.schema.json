@@ -207,6 +207,29 @@
         "possibleTypes": null
       },
       {
+        "kind": "OBJECT",
+        "name": "DeleteAlbum",
+        "description": null,
+        "fields": [
+          {
+            "name": "album",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "AlbumType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "SCALAR",
         "name": "ExpectedErrorType",
         "description": "\n    Errors messages and codes mapped to\n    fields or non fields errors.\n    Example:\n    {\n        field_name: [\n            {\n                \"message\": \"error message\",\n                \"code\": \"error_code\"\n            }\n        ],\n        other_field: [\n            {\n                \"message\": \"error message\",\n                \"code\": \"error_code\"\n            }\n        ],\n        nonFieldErrors: [\n            {\n                \"message\": \"error message\",\n                \"code\": \"error_code\"\n            }\n        ]\n    }\n    ",
@@ -223,6 +246,29 @@
         "fields": null,
         "inputFields": null,
         "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "ModifyAlbum",
+        "description": null,
+        "fields": [
+          {
+            "name": "album",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "AlbumType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -251,6 +297,68 @@
             "type": {
               "kind": "OBJECT",
               "name": "CreateAlbum",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deleteAlbum",
+            "description": null,
+            "args": [
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "DeleteAlbum",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "modifyAlbum",
+            "description": null,
+            "args": [
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "name",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "ModifyAlbum",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1111,6 +1219,35 @@
         "name": "Query",
         "description": null,
         "fields": [
+          {
+            "name": "userAlbums",
+            "description": null,
+            "args": [
+              {
+                "name": "username",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "AlbumType",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
           {
             "name": "allAlbums",
             "description": null,

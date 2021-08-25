@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useVerifyAccountMutation } from "../graphql/graphql";
+import { useVerifyAccountMutation } from "../../graphql/graphql";
 import { useParams, useHistory } from "react-router-dom";
 
 type activationParamType = {

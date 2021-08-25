@@ -1,5 +1,6 @@
 query GetAllAlbums {
   allAlbums {
+    id
     name
     createdAt
   }

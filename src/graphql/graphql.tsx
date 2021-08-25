@@ -98,11 +98,23 @@ export type DeleteAccount = {
   errors?: Maybe<Scalars['ExpectedErrorType']>;
 };
 
+export type DeleteAlbum = {
+  __typename?: 'DeleteAlbum';
+  album?: Maybe<AlbumType>;
+};
 
+
+
+export type ModifyAlbum = {
+  __typename?: 'ModifyAlbum';
+  album?: Maybe<AlbumType>;
+};
 
 export type Mutation = {
   __typename?: 'Mutation';
   createAlbum?: Maybe<CreateAlbum>;
+  deleteAlbum?: Maybe<DeleteAlbum>;
+  modifyAlbum?: Maybe<ModifyAlbum>;
   /**
    * Register user with fields defined in the settings.
    *
@@ -245,6 +257,17 @@ export type Mutation = {
 
 
 export type MutationCreateAlbumArgs = {
+  name?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationDeleteAlbumArgs = {
+  id?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationModifyAlbumArgs = {
+  id?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
 };
 
@@ -400,10 +423,16 @@ export type PasswordReset = {
 
 export type Query = {
   __typename?: 'Query';
+  userAlbums?: Maybe<Array<Maybe<AlbumType>>>;
   allAlbums?: Maybe<Array<Maybe<AlbumType>>>;
   userByName?: Maybe<UserType>;
   me?: Maybe<UserType>;
   allUsers?: Maybe<Array<Maybe<UserType>>>;
+};
+
+
+export type QueryUserAlbumsArgs = {
+  username?: Maybe<Scalars['String']>;
 };
 
 
@@ -614,6 +643,13 @@ export type CreateAlbumMutationVariables = Exact<{
 
 export type CreateAlbumMutation = { __typename?: 'Mutation', createAlbum?: Maybe<{ __typename?: 'CreateAlbum', album?: Maybe<{ __typename?: 'AlbumType', id: any, name: string, createdAt: any, owner: { __typename?: 'UserType', username: string } }> }> };
 
+export type DeleteAlbumMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteAlbumMutation = { __typename?: 'Mutation', deleteAlbum?: Maybe<{ __typename?: 'DeleteAlbum', album?: Maybe<{ __typename?: 'AlbumType', id: any, name: string, createdAt: any, owner: { __typename?: 'UserType', username: string } }> }> };
+
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
@@ -621,6 +657,14 @@ export type LoginMutationVariables = Exact<{
 
 
 export type LoginMutation = { __typename?: 'Mutation', tokenAuth?: Maybe<{ __typename?: 'ObtainJSONWebToken', success?: Maybe<boolean>, errors?: Maybe<any>, token?: Maybe<string>, refreshToken?: Maybe<string> }> };
+
+export type ModifyAlbumMutationVariables = Exact<{
+  id: Scalars['String'];
+  name: Scalars['String'];
+}>;
+
+
+export type ModifyAlbumMutation = { __typename?: 'Mutation', modifyAlbum?: Maybe<{ __typename?: 'ModifyAlbum', album?: Maybe<{ __typename?: 'AlbumType', id: any, name: string, createdAt: any, owner: { __typename?: 'UserType', username: string } }> }> };
 
 export type RegisterMutationVariables = Exact<{
   username: Scalars['String'];
@@ -642,7 +686,14 @@ export type VerifyAccountMutation = { __typename?: 'Mutation', verifyAccount?: M
 export type GetAllAlbumsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllAlbumsQuery = { __typename?: 'Query', allAlbums?: Maybe<Array<Maybe<{ __typename?: 'AlbumType', name: string, createdAt: any }>>> };
+export type GetAllAlbumsQuery = { __typename?: 'Query', allAlbums?: Maybe<Array<Maybe<{ __typename?: 'AlbumType', id: any, name: string, createdAt: any }>>> };
+
+export type GetUserAlbumsQueryVariables = Exact<{
+  username: Scalars['String'];
+}>;
+
+
+export type GetUserAlbumsQuery = { __typename?: 'Query', userAlbums?: Maybe<Array<Maybe<{ __typename?: 'AlbumType', id: any, name: string, createdAt: any, owner: { __typename?: 'UserType', username: string } }>>> };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -690,6 +741,46 @@ export function useCreateAlbumMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateAlbumMutationHookResult = ReturnType<typeof useCreateAlbumMutation>;
 export type CreateAlbumMutationResult = Apollo.MutationResult<CreateAlbumMutation>;
 export type CreateAlbumMutationOptions = Apollo.BaseMutationOptions<CreateAlbumMutation, CreateAlbumMutationVariables>;
+export const DeleteAlbumDocument = gql`
+    mutation DeleteAlbum($id: String!) {
+  deleteAlbum(id: $id) {
+    album {
+      id
+      name
+      createdAt
+      owner {
+        username
+      }
+    }
+  }
+}
+    `;
+export type DeleteAlbumMutationFn = Apollo.MutationFunction<DeleteAlbumMutation, DeleteAlbumMutationVariables>;
+
+/**
+ * __useDeleteAlbumMutation__
+ *
+ * To run a mutation, you first call `useDeleteAlbumMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteAlbumMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteAlbumMutation, { data, loading, error }] = useDeleteAlbumMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteAlbumMutation(baseOptions?: Apollo.MutationHookOptions<DeleteAlbumMutation, DeleteAlbumMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteAlbumMutation, DeleteAlbumMutationVariables>(DeleteAlbumDocument, options);
+      }
+export type DeleteAlbumMutationHookResult = ReturnType<typeof useDeleteAlbumMutation>;
+export type DeleteAlbumMutationResult = Apollo.MutationResult<DeleteAlbumMutation>;
+export type DeleteAlbumMutationOptions = Apollo.BaseMutationOptions<DeleteAlbumMutation, DeleteAlbumMutationVariables>;
 export const LoginDocument = gql`
     mutation login($username: String!, $password: String!) {
   tokenAuth(username: $username, password: $password) {
@@ -727,6 +818,47 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const ModifyAlbumDocument = gql`
+    mutation ModifyAlbum($id: String!, $name: String!) {
+  modifyAlbum(id: $id, name: $name) {
+    album {
+      id
+      name
+      createdAt
+      owner {
+        username
+      }
+    }
+  }
+}
+    `;
+export type ModifyAlbumMutationFn = Apollo.MutationFunction<ModifyAlbumMutation, ModifyAlbumMutationVariables>;
+
+/**
+ * __useModifyAlbumMutation__
+ *
+ * To run a mutation, you first call `useModifyAlbumMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useModifyAlbumMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [modifyAlbumMutation, { data, loading, error }] = useModifyAlbumMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useModifyAlbumMutation(baseOptions?: Apollo.MutationHookOptions<ModifyAlbumMutation, ModifyAlbumMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ModifyAlbumMutation, ModifyAlbumMutationVariables>(ModifyAlbumDocument, options);
+      }
+export type ModifyAlbumMutationHookResult = ReturnType<typeof useModifyAlbumMutation>;
+export type ModifyAlbumMutationResult = Apollo.MutationResult<ModifyAlbumMutation>;
+export type ModifyAlbumMutationOptions = Apollo.BaseMutationOptions<ModifyAlbumMutation, ModifyAlbumMutationVariables>;
 export const RegisterDocument = gql`
     mutation Register($username: String!, $email: String!, $password1: String!, $password2: String!) {
   register(
@@ -806,6 +938,7 @@ export type VerifyAccountMutationOptions = Apollo.BaseMutationOptions<VerifyAcco
 export const GetAllAlbumsDocument = gql`
     query GetAllAlbums {
   allAlbums {
+    id
     name
     createdAt
   }
@@ -838,6 +971,46 @@ export function useGetAllAlbumsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetAllAlbumsQueryHookResult = ReturnType<typeof useGetAllAlbumsQuery>;
 export type GetAllAlbumsLazyQueryHookResult = ReturnType<typeof useGetAllAlbumsLazyQuery>;
 export type GetAllAlbumsQueryResult = Apollo.QueryResult<GetAllAlbumsQuery, GetAllAlbumsQueryVariables>;
+export const GetUserAlbumsDocument = gql`
+    query GetUserAlbums($username: String!) {
+  userAlbums(username: $username) {
+    id
+    name
+    createdAt
+    owner {
+      username
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUserAlbumsQuery__
+ *
+ * To run a query within a React component, call `useGetUserAlbumsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserAlbumsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserAlbumsQuery({
+ *   variables: {
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useGetUserAlbumsQuery(baseOptions: Apollo.QueryHookOptions<GetUserAlbumsQuery, GetUserAlbumsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserAlbumsQuery, GetUserAlbumsQueryVariables>(GetUserAlbumsDocument, options);
+      }
+export function useGetUserAlbumsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserAlbumsQuery, GetUserAlbumsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserAlbumsQuery, GetUserAlbumsQueryVariables>(GetUserAlbumsDocument, options);
+        }
+export type GetUserAlbumsQueryHookResult = ReturnType<typeof useGetUserAlbumsQuery>;
+export type GetUserAlbumsLazyQueryHookResult = ReturnType<typeof useGetUserAlbumsLazyQuery>;
+export type GetUserAlbumsQueryResult = Apollo.QueryResult<GetUserAlbumsQuery, GetUserAlbumsQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {
