@@ -1,0 +1,24 @@
+query GetOneAlbum($id : String!) {
+  oneAlbum(id : $id) {
+    id
+    name
+    createdAt
+    owner {
+      username
+    }
+    photoSet {
+      id
+      url
+      text
+      location
+      time
+      createdAt
+      width
+      height
+      owner {
+        username
+      }
+    }
+  }
+}
+

@@ -1,11 +1,12 @@
 import styled from "styled-components";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { useState } from "react";
 import {
-  GetUserAlbumsDocument,
-  useDeleteAlbumMutation,
-  AlbumType
+  GetAlbumPhotosDocument,
+  PhotoType,
+  useDeletePhotoMutation,
 } from "../../graphql/graphql";
+import { makeUrlfromPhotoname } from "../../util/makeUrlandPhotoname";
 
 const AlbumWrapper = styled.div`
   position: relative;
@@ -50,24 +51,20 @@ const MenuWrapper = styled.div`
   position: absolute;
 `;
 
-type AlbumCardProp = {
-  album : AlbumType | {owner : {username : string}, id : string, name: string};
-  loginUser : string | boolean | null | undefined;
-  albumListQueryVariable: string;
+type PhotoCardProp = {
+  photo: PhotoType | any;
+  loginUser: string;
+  albumId : string;
 };
 
-const AlbumCard = ({
-  album,
-  loginUser,
-  albumListQueryVariable,
-}: AlbumCardProp) => {
+const PhotoCard = ({ loginUser, photo, albumId }: PhotoCardProp) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [deleteAlbum] = useDeleteAlbumMutation();
+  const [deletePhoto] = useDeletePhotoMutation();
   const history = useHistory();
   return (
     <>
       <AlbumWrapper>
-        {loginUser === album?.owner.username && (
+        {loginUser === photo.owner.username && (
           <MenuWrapper>
             {!isMenuOpen && (
               <MenuIcon onClick={() => setIsMenuOpen(true)}> ... </MenuIcon>
@@ -78,12 +75,12 @@ const AlbumCard = ({
                   onClick={async () => {
                     let del = window.confirm("really?");
                     if (del) {
-                      await deleteAlbum({
-                        variables: { id: album.id },
+                      await deletePhoto({
+                        variables: { id: photo.id },
                         refetchQueries: [
                           {
-                            query: GetUserAlbumsDocument,
-                            variables: { username: albumListQueryVariable },
+                            query: GetAlbumPhotosDocument,
+                            variables: { albumId },
                           },
                         ],
                       });
@@ -95,7 +92,10 @@ const AlbumCard = ({
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    history.push({ pathname: "/ModifyAlbum", state: { album } });
+                    history.push({
+                      pathname: "/ModifyPhoto",
+                      state: { photo },
+                    });
                   }}
                 >
                   modify
@@ -105,12 +105,21 @@ const AlbumCard = ({
           </MenuWrapper>
         )}
 
-        <Link to={{ pathname: "/album", state: { album } }}>
-          <h2>{album.name}</h2>
-        </Link>
+        <div>
+          <p>
+            {photo.location} {photo.text} {photo.time}
+          </p>
+          <img
+            height={400}
+            src={makeUrlfromPhotoname(photo.url)}
+            alt={photo.location}
+          />
+        </div>
+        {/* <Link to={{ pathname: "/photo", state: { albumId : id } }}>
+        </Link> */}
       </AlbumWrapper>
     </>
   );
 };
 
-export default AlbumCard;
+export default PhotoCard;

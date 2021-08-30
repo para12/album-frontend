@@ -1,0 +1,22 @@
+query GetAlbumPhotos($albumId: String!) {
+  albumPhotos(albumId: $albumId) {
+    id
+    url
+    text
+    location
+    time
+    createdAt
+    owner {
+      username
+    }
+    album {
+      id
+      name
+      owner {
+        username
+      }
+    }
+
+   
+  }
+}

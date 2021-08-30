@@ -1,0 +1,9 @@
+mutation ModifyPhoto($id : String!, $location : String!, $text:String!, $time : Date){
+  modifyPhoto(id:$id, location:$location, text:$text, time:$time){
+    photo {
+      id
+      location
+      text
+    }
+  }
+}

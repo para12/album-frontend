@@ -6,7 +6,7 @@ import { MainContainer } from "../../assets/styles/wrappers";
 import { Context } from "../../Context";
 import AlbumCard from "./AlbumCard";
 
-const AlbumHeader = styled.div`
+const AlbumListHeader = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -71,7 +71,7 @@ const Main = () => {
       {loading && <div>loading...</div>}
       {!loading && data && (
         <MainContainer>
-          <AlbumHeader>
+          <AlbumListHeader>
             {loginUser && (
               <CreateAlbumButton onClick={() => history.push("/CreateAlbum")}>
                 Create Album +
@@ -85,7 +85,7 @@ const Main = () => {
               />
               <button onClick={() => history.push(`/${search}`)}>go</button>
             </SearchArea>
-          </AlbumHeader>
+          </AlbumListHeader>
 
           <AlbumBody>
             <AlbumListWrapper>
@@ -93,11 +93,13 @@ const Main = () => {
                 return (
                   <AlbumCard
                     key={album!.name}
-                    name={album!.name}
-                    id={album!.id}
-                    isMenu={loginUser === album!.owner.username}
+                    album={album!}
+                    loginUser={loginUser}
                     albumListQueryVariable={albumListQueryVariable}
-                    // username={loginUser as string}
+                    // name={album!.name}
+                    // id={album!.id}
+                    // isMenu={loginUser === album!.owner.username}
+                    // ownername={album!.owner.username}
                   />
                 );
               })}

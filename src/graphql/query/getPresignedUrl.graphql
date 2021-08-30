@@ -1,0 +1,4 @@
+query GetPresignedUrl($filename:String!) {
+  presignedUrl(filename:$filename)
+}
+

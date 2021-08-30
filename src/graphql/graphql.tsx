@@ -13,6 +13,12 @@ export type Scalars = {
   Int: number;
   Float: number;
   /**
+   * The `Date` scalar type represents a Date
+   * value as specified by
+   * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+   */
+  Date: any;
+  /**
    * The `DateTime` scalar type represents a DateTime
    * value as specified by
    * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
@@ -59,12 +65,18 @@ export type Scalars = {
   UUID: any;
 };
 
+export type AddPhoto = {
+  __typename?: 'AddPhoto';
+  photo?: Maybe<PhotoType>;
+};
+
 export type AlbumType = {
   __typename?: 'AlbumType';
   id: Scalars['UUID'];
   name: Scalars['String'];
   owner: UserType;
   createdAt: Scalars['DateTime'];
+  photoSet: Array<PhotoType>;
 };
 
 /**
@@ -82,6 +94,7 @@ export type CreateAlbum = {
   __typename?: 'CreateAlbum';
   album?: Maybe<AlbumType>;
 };
+
 
 
 /**
@@ -103,6 +116,11 @@ export type DeleteAlbum = {
   album?: Maybe<AlbumType>;
 };
 
+export type DeletePhoto = {
+  __typename?: 'DeletePhoto';
+  photo?: Maybe<PhotoType>;
+};
+
 
 
 export type ModifyAlbum = {
@@ -110,8 +128,16 @@ export type ModifyAlbum = {
   album?: Maybe<AlbumType>;
 };
 
+export type ModifyPhoto = {
+  __typename?: 'ModifyPhoto';
+  photo?: Maybe<PhotoType>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  addPhoto?: Maybe<AddPhoto>;
+  deletePhoto?: Maybe<DeletePhoto>;
+  modifyPhoto?: Maybe<ModifyPhoto>;
   createAlbum?: Maybe<CreateAlbum>;
   deleteAlbum?: Maybe<DeleteAlbum>;
   modifyAlbum?: Maybe<ModifyAlbum>;
@@ -253,6 +279,30 @@ export type Mutation = {
   refreshToken?: Maybe<RefreshToken>;
   /** Same as `grapgql_jwt` implementation, with standard output. */
   revokeToken?: Maybe<RevokeToken>;
+};
+
+
+export type MutationAddPhotoArgs = {
+  albumId?: Maybe<Scalars['String']>;
+  height?: Maybe<Scalars['Int']>;
+  location?: Maybe<Scalars['String']>;
+  text?: Maybe<Scalars['String']>;
+  time?: Maybe<Scalars['Date']>;
+  url?: Maybe<Scalars['String']>;
+  width?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationDeletePhotoArgs = {
+  id?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationModifyPhotoArgs = {
+  id?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  text?: Maybe<Scalars['String']>;
+  time?: Maybe<Scalars['Date']>;
 };
 
 
@@ -421,18 +471,51 @@ export type PasswordReset = {
   errors?: Maybe<Scalars['ExpectedErrorType']>;
 };
 
+export type PhotoType = {
+  __typename?: 'PhotoType';
+  id: Scalars['UUID'];
+  url: Scalars['String'];
+  text: Scalars['String'];
+  location: Scalars['String'];
+  time?: Maybe<Scalars['Date']>;
+  width?: Maybe<Scalars['Int']>;
+  height?: Maybe<Scalars['Int']>;
+  createdAt: Scalars['DateTime'];
+  owner: UserType;
+  album?: Maybe<AlbumType>;
+};
+
 export type Query = {
   __typename?: 'Query';
+  albumPhotos?: Maybe<Array<Maybe<PhotoType>>>;
+  allPhotos?: Maybe<Array<Maybe<PhotoType>>>;
+  oneAlbum?: Maybe<AlbumType>;
   userAlbums?: Maybe<Array<Maybe<AlbumType>>>;
   allAlbums?: Maybe<Array<Maybe<AlbumType>>>;
+  presignedUrl?: Maybe<Scalars['String']>;
   userByName?: Maybe<UserType>;
   me?: Maybe<UserType>;
   allUsers?: Maybe<Array<Maybe<UserType>>>;
 };
 
 
+export type QueryAlbumPhotosArgs = {
+  albumId?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryOneAlbumArgs = {
+  id?: Maybe<Scalars['String']>;
+};
+
+
 export type QueryUserAlbumsArgs = {
   username?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryPresignedUrlArgs = {
+  filename?: Maybe<Scalars['String']>;
 };
 
 
@@ -569,6 +652,7 @@ export type UserNode = Node & {
   isActive: Scalars['Boolean'];
   dateJoined: Scalars['DateTime'];
   albumSet: Array<AlbumType>;
+  photoSet: Array<PhotoType>;
   pk?: Maybe<Scalars['Int']>;
   archived?: Maybe<Scalars['Boolean']>;
   verified?: Maybe<Scalars['Boolean']>;
@@ -590,6 +674,7 @@ export type UserType = {
   isActive: Scalars['Boolean'];
   dateJoined: Scalars['DateTime'];
   albumSet: Array<AlbumType>;
+  photoSet: Array<PhotoType>;
   password: Scalars['String'];
   /** Designates that this user has all permissions without explicitly assigning them. */
   isSuperuser: Scalars['Boolean'];
@@ -636,6 +721,19 @@ export type VerifyToken = {
   errors?: Maybe<Scalars['ExpectedErrorType']>;
 };
 
+export type AddPhotoMutationVariables = Exact<{
+  url: Scalars['String'];
+  location: Scalars['String'];
+  text: Scalars['String'];
+  time?: Maybe<Scalars['Date']>;
+  width?: Maybe<Scalars['Int']>;
+  height?: Maybe<Scalars['Int']>;
+  albumId: Scalars['String'];
+}>;
+
+
+export type AddPhotoMutation = { __typename?: 'Mutation', addPhoto?: Maybe<{ __typename?: 'AddPhoto', photo?: Maybe<{ __typename?: 'PhotoType', id: any, url: string, text: string, location: string, time?: Maybe<any>, createdAt: any, width?: Maybe<number>, height?: Maybe<number> }> }> };
+
 export type CreateAlbumMutationVariables = Exact<{
   name: Scalars['String'];
 }>;
@@ -649,6 +747,13 @@ export type DeleteAlbumMutationVariables = Exact<{
 
 
 export type DeleteAlbumMutation = { __typename?: 'Mutation', deleteAlbum?: Maybe<{ __typename?: 'DeleteAlbum', album?: Maybe<{ __typename?: 'AlbumType', id: any, name: string, createdAt: any, owner: { __typename?: 'UserType', username: string } }> }> };
+
+export type DeletePhotoMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeletePhotoMutation = { __typename?: 'Mutation', deletePhoto?: Maybe<{ __typename?: 'DeletePhoto', photo?: Maybe<{ __typename?: 'PhotoType', id: any, createdAt: any, owner: { __typename?: 'UserType', username: string } }> }> };
 
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
@@ -665,6 +770,16 @@ export type ModifyAlbumMutationVariables = Exact<{
 
 
 export type ModifyAlbumMutation = { __typename?: 'Mutation', modifyAlbum?: Maybe<{ __typename?: 'ModifyAlbum', album?: Maybe<{ __typename?: 'AlbumType', id: any, name: string, createdAt: any, owner: { __typename?: 'UserType', username: string } }> }> };
+
+export type ModifyPhotoMutationVariables = Exact<{
+  id: Scalars['String'];
+  location: Scalars['String'];
+  text: Scalars['String'];
+  time?: Maybe<Scalars['Date']>;
+}>;
+
+
+export type ModifyPhotoMutation = { __typename?: 'Mutation', modifyPhoto?: Maybe<{ __typename?: 'ModifyPhoto', photo?: Maybe<{ __typename?: 'PhotoType', id: any, location: string, text: string }> }> };
 
 export type RegisterMutationVariables = Exact<{
   username: Scalars['String'];
@@ -683,10 +798,31 @@ export type VerifyAccountMutationVariables = Exact<{
 
 export type VerifyAccountMutation = { __typename?: 'Mutation', verifyAccount?: Maybe<{ __typename?: 'VerifyAccount', success?: Maybe<boolean>, errors?: Maybe<any> }> };
 
+export type GetAlbumPhotosQueryVariables = Exact<{
+  albumId: Scalars['String'];
+}>;
+
+
+export type GetAlbumPhotosQuery = { __typename?: 'Query', albumPhotos?: Maybe<Array<Maybe<{ __typename?: 'PhotoType', id: any, url: string, text: string, location: string, time?: Maybe<any>, createdAt: any, owner: { __typename?: 'UserType', username: string }, album?: Maybe<{ __typename?: 'AlbumType', id: any, name: string, owner: { __typename?: 'UserType', username: string } }> }>>> };
+
 export type GetAllAlbumsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetAllAlbumsQuery = { __typename?: 'Query', allAlbums?: Maybe<Array<Maybe<{ __typename?: 'AlbumType', id: any, name: string, createdAt: any }>>> };
+
+export type GetOneAlbumQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetOneAlbumQuery = { __typename?: 'Query', oneAlbum?: Maybe<{ __typename?: 'AlbumType', id: any, name: string, createdAt: any, owner: { __typename?: 'UserType', username: string }, photoSet: Array<{ __typename?: 'PhotoType', id: any, url: string, text: string, location: string, time?: Maybe<any>, createdAt: any, width?: Maybe<number>, height?: Maybe<number>, owner: { __typename?: 'UserType', username: string } }> }> };
+
+export type GetPresignedUrlQueryVariables = Exact<{
+  filename: Scalars['String'];
+}>;
+
+
+export type GetPresignedUrlQuery = { __typename?: 'Query', presignedUrl?: Maybe<string> };
 
 export type GetUserAlbumsQueryVariables = Exact<{
   username: Scalars['String'];
@@ -701,6 +837,62 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 export type MeQuery = { __typename?: 'Query', me?: Maybe<{ __typename?: 'UserType', username: string, lastLogin?: Maybe<any>, email: string }> };
 
 
+export const AddPhotoDocument = gql`
+    mutation AddPhoto($url: String!, $location: String!, $text: String!, $time: Date, $width: Int, $height: Int, $albumId: String!) {
+  addPhoto(
+    url: $url
+    location: $location
+    text: $text
+    time: $time
+    width: $width
+    height: $height
+    albumId: $albumId
+  ) {
+    photo {
+      id
+      url
+      text
+      location
+      time
+      createdAt
+      width
+      height
+    }
+  }
+}
+    `;
+export type AddPhotoMutationFn = Apollo.MutationFunction<AddPhotoMutation, AddPhotoMutationVariables>;
+
+/**
+ * __useAddPhotoMutation__
+ *
+ * To run a mutation, you first call `useAddPhotoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddPhotoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addPhotoMutation, { data, loading, error }] = useAddPhotoMutation({
+ *   variables: {
+ *      url: // value for 'url'
+ *      location: // value for 'location'
+ *      text: // value for 'text'
+ *      time: // value for 'time'
+ *      width: // value for 'width'
+ *      height: // value for 'height'
+ *      albumId: // value for 'albumId'
+ *   },
+ * });
+ */
+export function useAddPhotoMutation(baseOptions?: Apollo.MutationHookOptions<AddPhotoMutation, AddPhotoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddPhotoMutation, AddPhotoMutationVariables>(AddPhotoDocument, options);
+      }
+export type AddPhotoMutationHookResult = ReturnType<typeof useAddPhotoMutation>;
+export type AddPhotoMutationResult = Apollo.MutationResult<AddPhotoMutation>;
+export type AddPhotoMutationOptions = Apollo.BaseMutationOptions<AddPhotoMutation, AddPhotoMutationVariables>;
 export const CreateAlbumDocument = gql`
     mutation CreateAlbum($name: String!) {
   createAlbum(name: $name) {
@@ -781,6 +973,45 @@ export function useDeleteAlbumMutation(baseOptions?: Apollo.MutationHookOptions<
 export type DeleteAlbumMutationHookResult = ReturnType<typeof useDeleteAlbumMutation>;
 export type DeleteAlbumMutationResult = Apollo.MutationResult<DeleteAlbumMutation>;
 export type DeleteAlbumMutationOptions = Apollo.BaseMutationOptions<DeleteAlbumMutation, DeleteAlbumMutationVariables>;
+export const DeletePhotoDocument = gql`
+    mutation DeletePhoto($id: String!) {
+  deletePhoto(id: $id) {
+    photo {
+      id
+      createdAt
+      owner {
+        username
+      }
+    }
+  }
+}
+    `;
+export type DeletePhotoMutationFn = Apollo.MutationFunction<DeletePhotoMutation, DeletePhotoMutationVariables>;
+
+/**
+ * __useDeletePhotoMutation__
+ *
+ * To run a mutation, you first call `useDeletePhotoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePhotoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deletePhotoMutation, { data, loading, error }] = useDeletePhotoMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeletePhotoMutation(baseOptions?: Apollo.MutationHookOptions<DeletePhotoMutation, DeletePhotoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeletePhotoMutation, DeletePhotoMutationVariables>(DeletePhotoDocument, options);
+      }
+export type DeletePhotoMutationHookResult = ReturnType<typeof useDeletePhotoMutation>;
+export type DeletePhotoMutationResult = Apollo.MutationResult<DeletePhotoMutation>;
+export type DeletePhotoMutationOptions = Apollo.BaseMutationOptions<DeletePhotoMutation, DeletePhotoMutationVariables>;
 export const LoginDocument = gql`
     mutation login($username: String!, $password: String!) {
   tokenAuth(username: $username, password: $password) {
@@ -859,6 +1090,46 @@ export function useModifyAlbumMutation(baseOptions?: Apollo.MutationHookOptions<
 export type ModifyAlbumMutationHookResult = ReturnType<typeof useModifyAlbumMutation>;
 export type ModifyAlbumMutationResult = Apollo.MutationResult<ModifyAlbumMutation>;
 export type ModifyAlbumMutationOptions = Apollo.BaseMutationOptions<ModifyAlbumMutation, ModifyAlbumMutationVariables>;
+export const ModifyPhotoDocument = gql`
+    mutation ModifyPhoto($id: String!, $location: String!, $text: String!, $time: Date) {
+  modifyPhoto(id: $id, location: $location, text: $text, time: $time) {
+    photo {
+      id
+      location
+      text
+    }
+  }
+}
+    `;
+export type ModifyPhotoMutationFn = Apollo.MutationFunction<ModifyPhotoMutation, ModifyPhotoMutationVariables>;
+
+/**
+ * __useModifyPhotoMutation__
+ *
+ * To run a mutation, you first call `useModifyPhotoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useModifyPhotoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [modifyPhotoMutation, { data, loading, error }] = useModifyPhotoMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      location: // value for 'location'
+ *      text: // value for 'text'
+ *      time: // value for 'time'
+ *   },
+ * });
+ */
+export function useModifyPhotoMutation(baseOptions?: Apollo.MutationHookOptions<ModifyPhotoMutation, ModifyPhotoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ModifyPhotoMutation, ModifyPhotoMutationVariables>(ModifyPhotoDocument, options);
+      }
+export type ModifyPhotoMutationHookResult = ReturnType<typeof useModifyPhotoMutation>;
+export type ModifyPhotoMutationResult = Apollo.MutationResult<ModifyPhotoMutation>;
+export type ModifyPhotoMutationOptions = Apollo.BaseMutationOptions<ModifyPhotoMutation, ModifyPhotoMutationVariables>;
 export const RegisterDocument = gql`
     mutation Register($username: String!, $email: String!, $password1: String!, $password2: String!) {
   register(
@@ -935,6 +1206,56 @@ export function useVerifyAccountMutation(baseOptions?: Apollo.MutationHookOption
 export type VerifyAccountMutationHookResult = ReturnType<typeof useVerifyAccountMutation>;
 export type VerifyAccountMutationResult = Apollo.MutationResult<VerifyAccountMutation>;
 export type VerifyAccountMutationOptions = Apollo.BaseMutationOptions<VerifyAccountMutation, VerifyAccountMutationVariables>;
+export const GetAlbumPhotosDocument = gql`
+    query GetAlbumPhotos($albumId: String!) {
+  albumPhotos(albumId: $albumId) {
+    id
+    url
+    text
+    location
+    time
+    createdAt
+    owner {
+      username
+    }
+    album {
+      id
+      name
+      owner {
+        username
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAlbumPhotosQuery__
+ *
+ * To run a query within a React component, call `useGetAlbumPhotosQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAlbumPhotosQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAlbumPhotosQuery({
+ *   variables: {
+ *      albumId: // value for 'albumId'
+ *   },
+ * });
+ */
+export function useGetAlbumPhotosQuery(baseOptions: Apollo.QueryHookOptions<GetAlbumPhotosQuery, GetAlbumPhotosQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAlbumPhotosQuery, GetAlbumPhotosQueryVariables>(GetAlbumPhotosDocument, options);
+      }
+export function useGetAlbumPhotosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAlbumPhotosQuery, GetAlbumPhotosQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAlbumPhotosQuery, GetAlbumPhotosQueryVariables>(GetAlbumPhotosDocument, options);
+        }
+export type GetAlbumPhotosQueryHookResult = ReturnType<typeof useGetAlbumPhotosQuery>;
+export type GetAlbumPhotosLazyQueryHookResult = ReturnType<typeof useGetAlbumPhotosLazyQuery>;
+export type GetAlbumPhotosQueryResult = Apollo.QueryResult<GetAlbumPhotosQuery, GetAlbumPhotosQueryVariables>;
 export const GetAllAlbumsDocument = gql`
     query GetAllAlbums {
   allAlbums {
@@ -971,6 +1292,92 @@ export function useGetAllAlbumsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetAllAlbumsQueryHookResult = ReturnType<typeof useGetAllAlbumsQuery>;
 export type GetAllAlbumsLazyQueryHookResult = ReturnType<typeof useGetAllAlbumsLazyQuery>;
 export type GetAllAlbumsQueryResult = Apollo.QueryResult<GetAllAlbumsQuery, GetAllAlbumsQueryVariables>;
+export const GetOneAlbumDocument = gql`
+    query GetOneAlbum($id: String!) {
+  oneAlbum(id: $id) {
+    id
+    name
+    createdAt
+    owner {
+      username
+    }
+    photoSet {
+      id
+      url
+      text
+      location
+      time
+      createdAt
+      width
+      height
+      owner {
+        username
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOneAlbumQuery__
+ *
+ * To run a query within a React component, call `useGetOneAlbumQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOneAlbumQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOneAlbumQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetOneAlbumQuery(baseOptions: Apollo.QueryHookOptions<GetOneAlbumQuery, GetOneAlbumQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOneAlbumQuery, GetOneAlbumQueryVariables>(GetOneAlbumDocument, options);
+      }
+export function useGetOneAlbumLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOneAlbumQuery, GetOneAlbumQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOneAlbumQuery, GetOneAlbumQueryVariables>(GetOneAlbumDocument, options);
+        }
+export type GetOneAlbumQueryHookResult = ReturnType<typeof useGetOneAlbumQuery>;
+export type GetOneAlbumLazyQueryHookResult = ReturnType<typeof useGetOneAlbumLazyQuery>;
+export type GetOneAlbumQueryResult = Apollo.QueryResult<GetOneAlbumQuery, GetOneAlbumQueryVariables>;
+export const GetPresignedUrlDocument = gql`
+    query GetPresignedUrl($filename: String!) {
+  presignedUrl(filename: $filename)
+}
+    `;
+
+/**
+ * __useGetPresignedUrlQuery__
+ *
+ * To run a query within a React component, call `useGetPresignedUrlQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPresignedUrlQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPresignedUrlQuery({
+ *   variables: {
+ *      filename: // value for 'filename'
+ *   },
+ * });
+ */
+export function useGetPresignedUrlQuery(baseOptions: Apollo.QueryHookOptions<GetPresignedUrlQuery, GetPresignedUrlQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPresignedUrlQuery, GetPresignedUrlQueryVariables>(GetPresignedUrlDocument, options);
+      }
+export function useGetPresignedUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPresignedUrlQuery, GetPresignedUrlQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPresignedUrlQuery, GetPresignedUrlQueryVariables>(GetPresignedUrlDocument, options);
+        }
+export type GetPresignedUrlQueryHookResult = ReturnType<typeof useGetPresignedUrlQuery>;
+export type GetPresignedUrlLazyQueryHookResult = ReturnType<typeof useGetPresignedUrlLazyQuery>;
+export type GetPresignedUrlQueryResult = Apollo.QueryResult<GetPresignedUrlQuery, GetPresignedUrlQueryVariables>;
 export const GetUserAlbumsDocument = gql`
     query GetUserAlbums($username: String!) {
   userAlbums(username: $username) {

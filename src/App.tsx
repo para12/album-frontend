@@ -39,7 +39,19 @@ const App = () => {
 
   const client = new ApolloClient({
     link: addDateLink.concat(authLink.concat(httpLink)),
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      typePolicies: {
+        Query: {
+          fields: {
+            presignedUrl: {
+              read() {
+                return undefined;
+              },
+            },
+          },
+        },
+      },
+    }),
   });
 
   return (

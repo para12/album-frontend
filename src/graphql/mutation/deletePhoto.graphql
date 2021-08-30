@@ -1,0 +1,11 @@
+mutation DeletePhoto($id : String!){
+  deletePhoto(id:$id){
+    photo {
+      id
+      createdAt
+      owner {
+        username
+      }
+    }
+  }
+}

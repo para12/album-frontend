@@ -1,15 +1,19 @@
 import { useContext, useEffect, useState } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { Context } from "../../Context";
 import {
   GetUserAlbumsDocument,
   useModifyAlbumMutation,
 } from "../../graphql/graphql";
 
+
+type StateType = { name : string, id : string};
+
 const ModifyAlbum = () => {
   const history = useHistory();
-  const { state } = useLocation();
-  const [name, setName] = useState((state as { name: string }).name);
+  const state = history.location.state as StateType;
+
+  const [name, setName] = useState(state.name);
   const {
     state: { loginUser },
   } = useContext(Context);
@@ -30,7 +34,7 @@ const ModifyAlbum = () => {
           <button
             onClick={async () => {
               await modifyAlbum({
-                variables: { id: (state as { id: string }).id, name },
+                variables: { id: state.id, name },
                 refetchQueries: [
                   {
                     query: GetUserAlbumsDocument,

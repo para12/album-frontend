@@ -1,0 +1,15 @@
+mutation AddPhoto($url : String!, $location : String!, $text : String!, $time : Date, $width : Int, $height : Int, $albumId : String!){
+  addPhoto(url : $url, location : $location, text : $text, time : $time, width : $width, height : $height, albumId : $albumId){
+    photo {
+      id
+      url
+      text
+      location
+      time
+      createdAt
+      width
+      height
+    }
+  }
+}
+

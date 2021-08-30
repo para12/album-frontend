@@ -1,16 +1,18 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import styled from "styled-components";
-import { useHistory, useParams } from "react-router-dom";
-import { useGetAllAlbumsQuery } from "../../graphql/graphql";
+import { useHistory } from "react-router-dom";
+import { useGetAlbumPhotosQuery } from "../../graphql/graphql";
 import { MainContainer } from "../../assets/styles/wrappers";
 import { Context } from "../../Context";
+import PhotoCard from './PhotoCard';
 
-interface AlbumType {
-  name: string;
-  createdAt: string;
-}
+const AlbumHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
-const MainHeader = styled.button`
+const AddPhotoButton = styled.button`
   width: 300px;
   display: flex;
   align-items: center;
@@ -36,50 +38,49 @@ const AlbumListWrapper = styled.div`
   margin: 30px auto;
 `;
 
-const AlbumWrapper = styled.div`
-  width: 100%;
-  min-height: 200px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 15px;
-  border: grey 1px dashed;
-`;
-
-type activationParamType = {
-    username: string;
-  };
+type StateType = { album : {id: string, name: string, owner : { username : string} }};
 
 const Album = () => {
-  const { username } = useParams<activationParamType>();
-  const { data, loading } = useGetAllAlbumsQuery();
-  const [albumList, setAlbumList] = useState<Array<AlbumType | null>>();
   const history = useHistory();
+  const state = history.location.state as StateType;
+  const { data, loading } = useGetAlbumPhotosQuery({
+    variables: {
+      albumId: state.album.id,
+    },
+  });
 
   const {
     state: { loginUser },
   } = useContext(Context);
 
-  useEffect(() => {
-    if (data) {
-      setAlbumList(data!.allAlbums!);
-    }
-  }, [data, loading]);
+  //albumId 와 ownername
 
   return (
     <>
-      {albumList && (
+      {!loading && data && (
         <MainContainer>
-          {loginUser && <MainHeader onClick={() => history.push('./addPhoto')} >Add Photo + </MainHeader>}
+          <AlbumHeader>
+            <h1>{state.album.name}</h1>
+
+            {loginUser === state.album.owner.username && (
+              <AddPhotoButton
+                onClick={() =>
+                  history.push({
+                    pathname: "/addPhoto",
+                    state: { album : state.album },
+                  })
+                }
+              >
+                Add Photo +
+              </AddPhotoButton>
+            )}
+          </AlbumHeader>
 
           <MainBody>
             <AlbumListWrapper>
-              {albumList.map((album) => {
+              {data.albumPhotos!.map((photo) => {
                 return (
-                  <AlbumWrapper key={album?.name}>
-                    <h2>{album!.name} {username}</h2>
-                  </AlbumWrapper>
+                  <PhotoCard key={photo!.id} albumId={state.album.id} photo={photo!} loginUser={loginUser as string} />
                 );
               })}
             </AlbumListWrapper>
